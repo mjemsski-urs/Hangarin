@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+# Base model with created_at and updated_at
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -8,6 +9,7 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
+# Priority model
 class Priority(BaseModel):
     name = models.CharField(max_length=100)
 
@@ -18,6 +20,7 @@ class Priority(BaseModel):
     def __str__(self):
         return self.name
 
+# Category model
 class Category(BaseModel):
     name = models.CharField(max_length=100)
 
@@ -28,12 +31,14 @@ class Category(BaseModel):
     def __str__(self):
         return self.name
 
+# Status choices
 STATUS_CHOICES = [
     ("Pending", "Pending"),
     ("In Progress", "In Progress"),
     ("Completed", "Completed"),
 ]
 
+# Task model
 class Task(BaseModel):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -45,6 +50,7 @@ class Task(BaseModel):
     def __str__(self):
         return self.title
 
+# SubTask model
 class SubTask(BaseModel):
     parent_task = models.ForeignKey(Task, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
@@ -53,6 +59,7 @@ class SubTask(BaseModel):
     def __str__(self):
         return self.title
 
+# Note model
 class Note(BaseModel):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     content = models.TextField()
