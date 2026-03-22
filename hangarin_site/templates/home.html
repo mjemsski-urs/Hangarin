@@ -1,9 +1,38 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block content %}
-<div class="container-fluid">
-    <h1>Hangarin Dashboard</h1>
-    <p>Hangarin</p>
+<div class="row">
+  <div class="col-md-12">
+    <div class="card mb-4">
+      <div class="card-header">
+        <strong>Welcome</strong>
+        <span class="small ms-1">Hangarin Dashboard</span>
+      </div>
+      <div class="card-body">
+        <p>Hello, World! 🎉</p>
+        <p>This is Hangarin home page powered by Django + CoreUI.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-12">
+    <div class="card mb-4">
+      <div class="card-header">
+        <strong>Tasks</strong>
+      </div>
+      <div class="card-body">
+        <ul>
+          {% for task in home %}
+            <li>{{ task.title }} – {{ task.status }} (Deadline: {{ task.deadline }})</li>
+          {% empty %}
+            <li>No tasks yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
