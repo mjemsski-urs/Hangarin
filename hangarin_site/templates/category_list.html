@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="mb-3">Categories</h4>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for category in categories %}
+      <tr>
+        <td>{{ category.name }}</td>
+        <td>
+          <a href="{% url 'category-edit' category.pk %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'category-delete' category.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="2">No categories yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{% url 'category-add' %}" class="btn btn-primary">Add Category</a>
+{% endblock %}

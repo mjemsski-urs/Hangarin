@@ -1,36 +1,47 @@
 {% extends "base.html" %}
-{% load static %}
-
 {% block content %}
-<div class="row">
+<div class="row mb-4">
   <div class="col-md-12">
-    <div class="card mb-4">
-      <div class="card-header">
-        <strong>Welcome</strong>
-        <span class="small ms-1">Hangarin Dashboard</span>
-      </div>
+    <div class="card">
       <div class="card-body">
-        <p>Hello, World! 🎉</p>
-        <p>This is Hangarin home page powered by Django + CoreUI.</p>
+        <h4 class="card-title">Welcome to Hangarin</h4>
+        <p class="card-text">
+          Stay on top of your goals and deadlines. This dashboard gives you a quick snapshot of your tasks and priorities.
+        </p>
       </div>
     </div>
   </div>
 </div>
 
-<div class="row mt-4">
+<div class="row">
   <div class="col-md-12">
-    <div class="card mb-4">
+    <div class="card">
       <div class="card-header">
-        <strong>Tasks</strong>
+        <h5 class="card-title">Recent Tasks</h5>
+        <div class="card-category">Quick preview of your latest activities</div>
       </div>
       <div class="card-body">
-        <ul>
-          {% for task in home %}
-            <li>{{ task.title }} – {{ task.status }} (Deadline: {{ task.deadline }})</li>
-          {% empty %}
-            <li>No tasks yet.</li>
-          {% endfor %}
-        </ul>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Deadline</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for task in home %}
+              <tr>
+                <td>{{ task.title }}</td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.deadline }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="3">No tasks yet. Start by adding one!</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <a href="{% url 'task-list' %}" class="btn btn-primary">View All Tasks</a>
       </div>
     </div>
   </div>
