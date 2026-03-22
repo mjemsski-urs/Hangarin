@@ -1,6 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
 <h4 class="mb-3">Tasks</h4>
+
+<form method="get" class="mb-3 row g-2 align-items-center">
+  <div class="col-md-6">
+    <input type="text" name="q" placeholder="Search tasks..." class="form-control" value="{{ request.GET.q }}">
+  </div>
+  <div class="col-md-4">
+    <select name="sort_by" id="sortSelect" class="form-select">
+      <option value="title" {% if request.GET.sort_by == "title" %}selected{% endif %}>Title</option>
+      <option value="deadline" {% if request.GET.sort_by == "deadline" %}selected{% endif %}>Deadline</option>
+      <option value="status" {% if request.GET.sort_by == "status" %}selected{% endif %}>Status</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-primary w-100">Apply</button>
+  </div>
+</form>
+
+{% if request.GET.q or request.GET.sort_by %}
+<div class="mb-3">
+  <a href="{% url 'task-list' %}" class="btn btn-secondary">Back to All Tasks</a>
+</div>
+{% endif %}
+
 <table class="table table-striped">
   <thead>
     <tr>
@@ -27,5 +50,38 @@
     {% endfor %}
   </tbody>
 </table>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}">
+          Previous
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    <li class="page-item disabled">
+      <span class="page-link">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}">
+          Next
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
 <a href="{% url 'task-add' %}" class="btn btn-primary">Add Task</a>
 {% endblock %}

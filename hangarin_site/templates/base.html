@@ -10,6 +10,18 @@
     <link rel="stylesheet" href="{% static 'vendors/@coreui/icons/css/free.min.css' %}">
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'vendors/simplebar/css/simplebar.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
+    <style>
+  .dashboard-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+  }
+  .dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  }
+</style>
+
     {% block extra_css %}{% endblock %}
   </head>
   <body>

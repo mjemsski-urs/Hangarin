@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="row mb-4">
   <div class="col-md-12">
     <div class="card">
@@ -10,6 +11,64 @@
         </p>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-3">
+    <a href="{% url 'task-list' %}" class="text-decoration-none">
+      <div class="card dashboard-card">
+        <div class="card-body bg-primary text-white text-center">
+          <div class="mb-2">
+            <i class="la la-check-circle la-2x"></i>
+          </div>
+          <p class="card-category">Total Tasks</p>
+          <h4 class="card-title fw-bold">{{ total_tasks }}</h4>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-3">
+    <a href="{% url 'category-list' %}" class="text-decoration-none">
+      <div class="card dashboard-card">
+        <div class="card-body bg-success text-white text-center">
+          <div class="mb-2">
+            <i class="la la-tags la-2x"></i>
+          </div>
+          <p class="card-category">Categories</p>
+          <h4 class="card-title fw-bold">{{ total_categories }}</h4>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-3">
+    <a href="{% url 'priority-list' %}" class="text-decoration-none">
+      <div class="card dashboard-card">
+        <div class="card-body bg-warning text-dark text-center">
+          <div class="mb-2">
+            <i class="la la-flag la-2x"></i>
+          </div>
+          <p class="card-category">Priorities</p>
+          <h4 class="card-title fw-bold">{{ total_priorities }}</h4>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-3">
+    <a href="{% url 'task-list' %}" class="text-decoration-none">
+      <div class="card dashboard-card">
+        <div class="card-body bg-danger text-white text-center">
+          <div class="mb-2">
+            <i class="la la-calendar la-2x"></i>
+          </div>
+          <p class="card-category">Due Today</p>
+          <h4 class="card-title fw-bold">{{ tasks_due_today }}</h4>
+        </div>
+      </div>
+    </a>
   </div>
 </div>
 
@@ -46,4 +105,5 @@
     </div>
   </div>
 </div>
+
 {% endblock %}
