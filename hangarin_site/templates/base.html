@@ -11,16 +11,25 @@
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'vendors/simplebar/css/simplebar.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
+    
     <style>
-  .dashboard-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
-  }
-  .dashboard-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-  }
-</style>
+      .dashboard-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+      }
+      .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      }
+      .sidebar-brand-full {
+        letter-spacing: 2px;
+        color: #fff;
+      }
+      .header-sticky {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+      }
+    </style>
 
     {% block extra_css %}{% endblock %}
   </head>
@@ -40,22 +49,24 @@
         </li>
         
         <li class="nav-title">Management</li>
+        
         <li class="nav-item">
           <a class="nav-link" href="{% url 'task-list' %}"> 
             <svg class="nav-icon"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-list-rich' %}"></use></svg> Tasks
           </a>
         </li>
+
         <li class="nav-item">
           <a class="nav-link" href="{% url 'category-list' %}">
             <svg class="nav-icon"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-tags' %}"></use></svg> Categories
           </a>
         </li>
+
         <li class="nav-item">
           <a class="nav-link" href="{% url 'priority-list' %}">
             <svg class="nav-icon"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-flag-alt' %}"></use></svg> Priorities
           </a>
         </li>
-      </ul>
       
       <div class="sidebar-footer border-top d-none d-md-flex">     
         <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
@@ -64,23 +75,73 @@
 
     <div class="wrapper d-flex flex-column min-vh-100">
       <header class="header header-sticky p-0 mb-4">
-        <div class="container-fluid border-bottom px-4">
-          <button class="header-toggler" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
-            <svg class="icon icon-lg"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-menu' %}"></use></svg>
+        <div class="container-fluid border-bottom px-4 d-flex justify-content-between align-items-center" style="height: 64px;">
+          <button class="header-toggler" type="button"
+            onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
+            <svg class="icon icon-lg">
+              <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-menu' %}"></use>
+            </svg>
           </button>
+
+          <div class="header-nav d-flex align-items-center">
+            {% if request.user.is_authenticated %}
+            <div class="dropdown">
+              <button class="btn btn-link py-0 d-flex align-items-center text-decoration-none dropdown-toggle"
+                      type="button" id="userDropdown" data-coreui-toggle="dropdown" aria-expanded="false">
+                <div class="avatar avatar-md me-2">
+                  <img src="{% static 'img/default-avatar.png' %}" alt="avatar" class="avatar-img rounded-circle">
+                </div>
+                <div class="d-none d-md-block text-start">
+                  <div class="fw-semibold" style="line-height: 1.2;">{{ request.user.username }}</div>
+                  <small class="text-muted">
+                    {% if request.user.is_staff %}Admin{% else %}Member{% endif %}
+                  </small>
+                </div>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                <li><h6 class="dropdown-header">Manage Account</h6></li>
+                <li>
+                  <a class="dropdown-item d-flex align-items-center" href="{% url 'account_change_password' %}">
+                    <svg class="icon me-2"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-user' %}"></use></svg> Change Password
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form method="post" action="{% url 'account_logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
+                      <svg class="icon me-2"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-account-logout' %}"></use></svg> Logout
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+            {% else %}
+            <a href="{% url 'account_login' %}" class="btn btn-primary btn-sm">Login</a>
+            {% endif %}
+          </div>
         </div>
       </header>
 
       <div class="body flex-grow-1">
         <div class="container-lg px-4">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-coreui-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
           {% block content %}
           {% endblock %}
         </div>
       </div>
 
-      <footer class="footer px-4">
+      <footer class="footer px-4 border-top mt-4">
         <div><strong>Hangarin</strong> Project © 2026</div>
-        <div class="ms-auto">Built with Django & CoreUI</div>
+        <div class="ms-auto text-muted small">Built with Django & CoreUI</div>
       </footer>
     </div>
 
@@ -88,13 +149,15 @@
     <script src="{% static 'vendors/simplebar/js/simplebar.min.js' %}"></script>
     
     <script>
-      const header = document.querySelector('header.header');
+      // Header shadow logic on scroll
+      const headerElement = document.querySelector('header.header');
       document.addEventListener('scroll', () => {
-        if (header) {
-          header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
+        if (headerElement) {
+          headerElement.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
         }
       });
     </script>
+    
     {% block extra_js %}{% endblock %}
   </body>
 </html>
