@@ -1,10 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<h4 class="mb-3">{% if form.instance.pk %}Edit Priority{% else %}Add Priority{% endif %}</h4>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-success">Save</button>
-  <a href="{% url 'priority-list' %}" class="btn btn-secondary">Cancel</a>
-</form>
+<style>
+    .label-title { font-weight: 700; color: #4f5d73; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; display: block; }
+    .custom-input { border: 1px solid #b1b7c1 !important; border-radius: 4px !important; padding: 10px 15px; }
+</style>
+
+<div class="container-fluid py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white p-2">
+                    <h6 class="mb-0">
+                        <i class="cil-shield-alt me-2"></i>
+                        {% if form.instance.pk %} Edit Priority Level {% else %} Add New Priority {% endif %}
+                    </h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" autocomplete="off">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="label-title">Priority Level Name</label>
+                            <input type="text" name="name" class="form-control custom-input" value="{{ form.name.value|default:'' }}" required placeholder="e.g. High, Medium, Low">
+                        </div>
+
+                        <div class="border-top pt-3 d-flex justify-content-center gap-2">
+                            <button type="submit" class="btn btn-success px-5 text-white fw-bold">
+                                {% if form.instance.pk %} Update {% else %} Save {% endif %}
+                            </button>
+                            <a href="{% url 'priority-list' %}" class="btn btn-ghost-secondary px-4 border">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

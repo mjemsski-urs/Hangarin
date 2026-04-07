@@ -47,27 +47,43 @@
             <svg class="nav-icon"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-speedometer' %}"></use></svg> Dashboard
           </a>
         </li>
-        
+
         <li class="nav-title">Management</li>
-        
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'task-list' %}"> 
+
+        <!-- Tasks Section -->
+        <li class="nav-group">
+          <a class="nav-link nav-group-toggle" href="#">
             <svg class="nav-icon"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-list-rich' %}"></use></svg> Tasks
           </a>
+          <ul class="nav-group-items">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'task-list' %}">All Tasks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'subtask-list' %}">SubTasks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'note-list' %}">Notes</a>
+            </li>
+          </ul>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'category-list' %}">
-            <svg class="nav-icon"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-tags' %}"></use></svg> Categories
+        <!-- Categories & Priorities Section -->
+        <li class="nav-group">
+          <a class="nav-link nav-group-toggle" href="#">
+            <svg class="nav-icon"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-tags' %}"></use></svg> Categories & Priorities
           </a>
+          <ul class="nav-group-items">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'category-list' %}">Categories</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'priority-list' %}">Priorities</a>
+            </li>
+          </ul>
         </li>
+      </ul>
 
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'priority-list' %}">
-            <svg class="nav-icon"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-flag-alt' %}"></use></svg> Priorities
-          </a>
-        </li>
-      
       <div class="sidebar-footer border-top d-none d-md-flex">     
         <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
       </div>

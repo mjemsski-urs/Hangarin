@@ -20,7 +20,9 @@ from tasks.views import (
     HomePageView,
     TaskListView, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView,
     CategoryListView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
-    PriorityListView, PriorityCreateView, PriorityUpdateView, PriorityDeleteView,
+    PriorityListView, PriorityCreateView, PriorityUpdateView, PriorityDeleteView, 
+    SubTaskListView, SubTaskDetailView, SubTaskUpdateView, SubTaskDeleteView,
+    NoteListView, NoteDetailView, NoteUpdateView, NoteDeleteView, add_subtask, add_note
 )
 
 urlpatterns = [
@@ -40,4 +42,14 @@ urlpatterns = [
     path("priorities/add/", PriorityCreateView.as_view(), name="priority-add"),
     path("priorities/<int:pk>/edit/", PriorityUpdateView.as_view(), name="priority-edit"),
     path("priorities/<int:pk>/delete/", PriorityDeleteView.as_view(), name="priority-delete"),
+    path('subtasks/', SubTaskListView.as_view(), name='subtask-list'),
+    path('subtasks/<int:pk>/', SubTaskDetailView.as_view(), name='subtask-detail'),
+    path('subtasks/<int:pk>/edit/', SubTaskUpdateView.as_view(), name='subtask-edit'),
+    path('subtasks/<int:pk>/delete/', SubTaskDeleteView.as_view(), name='subtask-delete'),
+    path('notes/', NoteListView.as_view(), name='note-list'),
+    path('notes/<int:pk>/', NoteDetailView.as_view(), name='note-detail'),
+    path('notes/<int:pk>/edit/', NoteUpdateView.as_view(), name='note-edit'),
+    path('notes/<int:pk>/delete/', NoteDeleteView.as_view(), name='note-delete'),
+    path('tasks/<int:task_id>/subtask/add/', add_subtask, name='subtask-add'),
+    path('tasks/<int:task_id>/note/add/', add_note, name='note-add'),
 ]

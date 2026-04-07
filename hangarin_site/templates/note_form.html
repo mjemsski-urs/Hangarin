@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .label-title { font-weight: 700; color: #4f5d73; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; display: block; }
+    .custom-input { border: 1px solid #b1b7c1 !important; border-radius: 4px !important; padding: 8px 12px; }
+</style>
+
+<div class="container-fluid py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white p-2">
+                    <h6 class="mb-0">
+                        <i class="cil-notes me-2"></i>
+                        {% if form.instance.pk %}
+                            Edit Note
+                        {% else %}
+                            Add Note for: <span class="fw-normal">{{ task.title }}</span>
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" autocomplete="off">
+                        {% csrf_token %}
+                        
+                        <input type="hidden" name="task" value="{% if form.instance.pk %}{{ form.instance.task.id }}{% else %}{{ task.id }}{% endif %}">
+
+                        <div class="mb-3">
+                            <label class="label-title">Note Content</label>
+                            <textarea name="content" class="form-control custom-input" rows="8" 
+                                      placeholder="Write your notes here..." required>{{ form.content.value|default:'' }}</textarea>
+                        </div>
+
+                        <div class="border-top mt-4 pt-3 d-flex justify-content-end gap-2">
+                            <button type="button" onclick="history.back()" class="btn btn-sm btn-light border px-4">
+                                Cancel
+                            </button>
+                            
+                            <button type="submit" class="btn btn-sm {% if 'note' in request.path %}btn-dark{% else %}btn-info text-white{% endif %} px-5 fw-bold">
+                                {% if form.instance.pk %} Update {% else %} Save {% endif %}
+                            </button>
+                        </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

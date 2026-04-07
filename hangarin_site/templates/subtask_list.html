@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>SubTasks</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Status</th>
+      <th>Parent Task</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for subtask in subtasks %}
+    <tr>
+      <td>{{ subtask.title }}</td>
+      <td>{{ subtask.status }}</td>
+      <td>{{ subtask.parent_task.title }}</td>
+      <td>
+        <a href="{% url 'subtask-detail' subtask.id %}" class="btn btn-sm btn-info">View</a>
+        <a href="{% url 'subtask-edit' subtask.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'subtask-delete' subtask.id %}" class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">No SubTasks found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Pagination controls -->
+<div class="d-flex justify-content-between align-items-center">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary">Previous</a>
+  {% endif %}
+  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary">Next</a>
+  {% endif %}
+</div>
+{% endblock %}
