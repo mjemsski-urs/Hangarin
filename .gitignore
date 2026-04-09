@@ -217,4 +217,5 @@ __marimo__/
 
 # Static files collected by 'collectstatic'
 staticfiles/
+hangarin_site/staticfiles/
 media/
