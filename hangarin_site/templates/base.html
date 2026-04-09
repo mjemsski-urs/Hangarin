@@ -102,30 +102,28 @@
           </button>
 
           <div class="header-nav d-flex align-items-center">
-            {% if request.user.is_authenticated %}
+            {% if user.is_authenticated %}
             <div class="dropdown">
-              <button class="btn btn-link py-0 d-flex align-items-center text-decoration-none dropdown-toggle"
+              <button class="btn btn-link py-0 d-flex align-items-center text-decoration-none dropdown-toggle" 
                       type="button" id="userDropdown" data-coreui-toggle="dropdown" aria-expanded="false">
                 <div class="avatar avatar-md me-2">
-                  <img src="{% static 'img/default-avatar.png' %}" alt="avatar" class="avatar-img rounded-circle">
+                  <img src="{% static 'img/avatar.png' %}" alt="user" class="avatar-img rounded-circle">
                 </div>
-                <div class="d-none d-md-block text-start">
-                  <div class="fw-semibold" style="line-height: 1.2;">{{ request.user.username }}</div>
-                  <small class="text-muted">
-                    {% if request.user.is_staff %}Admin{% else %}Member{% endif %}
-                  </small>
+                <div class="text-start">
+                  <div class="user-name-text" style="line-height: 1.2;">{{ user.username }}</div>
+                  <small class="text-muted">{% if user.is_staff %}Admin{% else %}Member{% endif %}</small>
                 </div>
               </button>
               <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
                 <li><h6 class="dropdown-header">Manage Account</h6></li>
                 <li>
                   <a class="dropdown-item d-flex align-items-center" href="{% url 'account_change_password' %}">
-                    <svg class="icon me-2"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-user' %}"></use></svg> Change Password
+                    <svg class="icon me-2"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-user' %}"></use></svg> Password
                   </a>
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
-                  <form method="post" action="{% url 'account_logout' %}" style="display:inline;">
+                  <form method="post" action="{% url 'account_logout' %}">
                     {% csrf_token %}
                     <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
                       <svg class="icon me-2"><use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-account-logout' %}"></use></svg> Logout

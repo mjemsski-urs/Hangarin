@@ -151,7 +151,7 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-PWA_APP_NAME = 'ProjectSite'
+PWA_APP_NAME = 'Hangarin: Task and To-Do Manager'
 PWA_APP_DESCRIPTION = "A Progressive Web App version of ProjectSite"
 PWA_APP_THEME_COLOR = '#0A0A0A'
 PWA_APP_BACKGROUND_COLOR = '#FFFFFF'

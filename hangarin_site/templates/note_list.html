@@ -1,39 +1,120 @@
 {% extends "base.html" %}
-{% block content %}
-<h2>Notes</h2>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Content</th>
-      <th>Parent Task</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for note in notes %}
-    <tr>
-      <td>{{ note.content|truncatewords:10 }}</td>
-      <td>{{ note.task.title }}</td>
-      <td>
-        <a href="{% url 'note-detail' note.id %}" class="btn btn-sm btn-info">View</a>
-        <a href="{% url 'note-edit' note.id %}" class="btn btn-sm btn-warning">Edit</a>
-        <a href="{% url 'note-delete' note.id %}" class="btn btn-sm btn-danger">Delete</a>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="3">No Notes found.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% load static %}
 
-<!-- Pagination controls -->
-<div class="d-flex justify-content-between align-items-center">
-  {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary">Previous</a>
-  {% endif %}
-  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-  {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary">Next</a>
-  {% endif %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Notes Management</h4>
 </div>
+
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="get" action="{% url 'note-list' %}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="la la-search"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control border-start-0" 
+                               placeholder="Search note content..." value="{{ request.GET.q }}">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white">Date:</span>
+                        <input type="date" name="date" class="form-control" value="{{ request.GET.date }}">
+                    </div>
+                </div>
+
+                <div class="col-md-2 d-flex gap-2">
+                    <button class="btn btn-primary w-100" type="submit">Apply</button>
+                    {% if request.GET.q or request.GET.date %}
+                        <a href="{% url 'note-list' %}" class="btn btn-outline-secondary">Reset</a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4" style="width: 40%;">Content</th>
+                        <th>Parent Task</th>
+                        <th>Created At</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="text-wrap" style="max-height: 50px; overflow: hidden;">
+                                    {{ note.content|truncatewords:15 }}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge border text-dark bg-light">
+                                    <i class="la la-tasks"></i> {{ note.task.title }}
+                                </span>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ note.created_at|date:"M d, Y | h:i A" }}</small>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group">
+                                    <a href="{% url 'note-detail' note.id %}" class="btn btn-sm btn-outline-info">
+                                        <i class="la la-eye"></i>
+                                    </a>
+                                    {% if user.is_authenticated %}
+                                    <a href="{% url 'note-edit' note.id %}" class="btn btn-sm btn-outline-warning">
+                                        <i class="la la-edit"></i>
+                                    </a>
+                                    <a href="{% url 'note-delete' note.id %}" class="btn btn-sm btn-outline-danger">
+                                        <i class="la la-trash"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="la la-sticky-note la-3x mb-3 d-block"></i>
+                                No notes found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}">
+                    Previous
+                </a>
+            </li>
+        {% endif %}
+        <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}">
+                    Next
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
 {% endblock %}

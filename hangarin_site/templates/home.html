@@ -1,18 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="row mb-4">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Welcome to Hangarin</h4>
-        <p class="card-text">
-          Stay on top of your goals and deadlines. This dashboard gives you a quick snapshot of your tasks and priorities.
-        </p>
-      </div>
-    </div>
-  </div>
+<div class="card-body">
+  {% if request.user.is_authenticated %}
+    <h4 class="card-title">Welcome back, {{ user.username }}!</h4>
+    <p class="text-muted">
+      {% if request.user.is_staff %}Admin{% else %}Member{% endif %}
+    </p>
+  {% else %}
+    <h4 class="card-title">Welcome to Hangarin</h4>
+  {% endif %}
+
+  <p class="card-text">
+    Stay on top of your goals and deadlines. This dashboard gives you a quick snapshot of your tasks and priorities.
+  </p>
 </div>
+
 
 <div class="row mb-4">
   <div class="col-md-3">

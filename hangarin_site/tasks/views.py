@@ -5,6 +5,7 @@ from django.forms import ModelForm
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 from .models import Task, Category, Priority, SubTask, Note
 
@@ -12,6 +13,7 @@ class HomePageView(ListView):
     model = Task
     context_object_name = 'home'
     template_name = "home.html"
+    login_url = 'account_login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -48,26 +50,39 @@ class NoteForm(ModelForm):
 
 class TaskListView(ListView):
     model = Task
-    context_object_name = "tasks"
     template_name = "task_list.html"
+    context_object_name = "tasks"
     paginate_by = 10
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        query = self.request.GET.get("q")
-        if query:
-            qs = qs.filter(
-                Q(title__icontains=query) |
-                Q(description__icontains=query)
+        queryset = Task.objects.all() 
+
+        q = self.request.GET.get('q')
+        status = self.request.GET.get('status')
+        priority = self.request.GET.get('priority')
+        category = self.request.GET.get('category')
+
+        if q:
+            queryset = queryset.filter(
+                Q(title__icontains=q) | Q(description__icontains=q)
             )
-        return qs
-    
-    def get_ordering(self):
-        allowed = ["title", "deadline", "status"]
-        sort_by = self.request.GET.get("sort_by")
-        if sort_by in allowed:
-            return sort_by
-        return "deadline"
+        
+        if status:
+            queryset = queryset.filter(status=status)
+            
+        if priority:
+            queryset = queryset.filter(priority_id=priority)
+            
+        if category:
+            queryset = queryset.filter(category_id=category)
+            
+        return queryset.order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['priorities'] = Priority.objects.all()
+        context['categories'] = Category.objects.all()
+        return context
 
 class TaskDetailView(DetailView):
     model = Task
@@ -81,19 +96,19 @@ class TaskDetailView(DetailView):
         context["notes"] = Note.objects.filter(task=task)
         return context
 
-class TaskCreateView(CreateView):
+class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
     template_name = "task_form.html"
     success_url = reverse_lazy("task-list")
 
-class TaskUpdateView(UpdateView):
+class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
     template_name = "task_form.html"
     success_url = reverse_lazy("task-list")
 
-class TaskDeleteView(DeleteView):
+class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     template_name = "task_confirm_delete.html"
     success_url = reverse_lazy("task-list")
@@ -113,19 +128,19 @@ class CategoryListView(ListView):
             )
         return qs
 
-class CategoryCreateView(CreateView):
+class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = "category_form.html"
     success_url = reverse_lazy("category-list")
 
-class CategoryUpdateView(UpdateView):
+class CategoryUpdateView(LoginRequiredMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     template_name = "category_form.html"
     success_url = reverse_lazy("category-list")
 
-class CategoryDeleteView(DeleteView):
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     template_name = "category_confirm_delete.html"
     success_url = reverse_lazy("category-list")
@@ -145,19 +160,19 @@ class PriorityListView(ListView):
             )
         return qs
 
-class PriorityCreateView(CreateView):
+class PriorityCreateView(LoginRequiredMixin, CreateView):
     model = Priority
     form_class = PriorityForm
     template_name = "priority_form.html"
     success_url = reverse_lazy("priority-list")
 
-class PriorityUpdateView(UpdateView):
+class PriorityUpdateView(LoginRequiredMixin, UpdateView):
     model = Priority
     form_class = PriorityForm
     template_name = "priority_form.html"
     success_url = reverse_lazy("priority-list")
 
-class PriorityDeleteView(DeleteView):
+class PriorityDeleteView(LoginRequiredMixin, DeleteView):
     model = Priority
     template_name = "priority_confirm_delete.html"
     success_url = reverse_lazy("priority-list")
@@ -169,12 +184,24 @@ class SubTaskListView(ListView):
     context_object_name = "subtasks"
     paginate_by = 10
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        q = self.request.GET.get('q')
+        status = self.request.GET.get('status')
+
+        if q:
+            queryset = queryset.filter(title__icontains=q)
+        if status:
+            queryset = queryset.filter(status=status)
+            
+        return queryset.order_by('-id')
+
 class SubTaskDetailView(DetailView):
     model = SubTask
     template_name = "subtask_detail.html"
     context_object_name = "subtask"
 
-class SubTaskUpdateView(UpdateView):
+class SubTaskUpdateView(LoginRequiredMixin, UpdateView):
     model = SubTask
     form_class = SubTaskForm
     template_name = 'subtask_form.html'
@@ -187,7 +214,7 @@ class SubTaskUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('task-detail', kwargs={'pk': self.object.parent_task.id})
 
-class SubTaskDeleteView(DeleteView):
+class SubTaskDeleteView(LoginRequiredMixin, DeleteView):
     model = SubTask
     template_name = "subtask_confirm_delete.html"
     success_url = reverse_lazy("subtask-list")
@@ -199,12 +226,25 @@ class NoteListView(ListView):
     context_object_name = "notes"
     paginate_by = 10
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        q = self.request.GET.get('q')
+        date_filter = self.request.GET.get('date')
+
+        if q:
+            queryset = queryset.filter(content__icontains=q)
+        
+        if date_filter:
+            queryset = queryset.filter(created_at__date=date_filter)
+            
+        return queryset.order_by('-created_at')
+
 class NoteDetailView(DetailView):
     model = Note
     template_name = "note_detail.html"
     context_object_name = "note"
 
-class NoteUpdateView(UpdateView):
+class NoteUpdateView(LoginRequiredMixin, UpdateView):
     model = Note
     form_class = NoteForm
     template_name = 'note_form.html'
@@ -217,7 +257,7 @@ class NoteUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('task-detail', kwargs={'pk': self.object.task.id})
 
-class NoteDeleteView(DeleteView):
+class NoteDeleteView(LoginRequiredMixin, DeleteView):
     model = Note
     template_name = "note_confirm_delete.html"
     success_url = reverse_lazy("note-list")
